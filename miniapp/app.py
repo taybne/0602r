@@ -137,14 +137,20 @@ def get_locations(city_slug):
         except Exception:
             return [val]
 
-    return jsonify([
-        {
+    result = []
+    for l in locations:
+        photos_list = json.loads(l.photos or '[]')  # только имена файлов
+        # формируем полный путь для фронтенда
+        photos_urls = [f"/static/photos/{city_slug}/{p}" for p in photos_list]
+
+        result.append({
             'title': l.title,
             'desc': l.description or '',
             'themes': _parse_themes(l.theme),
-            'photos': json.loads(l.photos or '[]')
-        } for l in locations
-    ])
+            'photos': photos_urls
+        })
+
+    return jsonify(result)
 
 # 🔹 ФОТО
 @app.route('/api/photo-suggest', methods=['POST'])
@@ -189,4 +195,5 @@ if __name__ == "__main__":
     print("👑 http://localhost:8000/admin/")
 
     app.run(host="0.0.0.0", port=8000, debug=True)
+
 
