@@ -1,0 +1,1323 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TAG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* Современный дизайн как в Instagram/Notion */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        --border-radius: 20px;
+      }
+
+      body {
+        font-family: -apple-system, "SF Pro Display", system-ui, sans-serif;
+      }
+
+      .app {
+        padding: 20px;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+
+      /* Header - ДВУХЭТАЖНЫЙ */
+      .header {
+        background: white;
+        padding: 24px 20px 20px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        margin-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+        position: relative;
+      }
+
+      .header h1 {
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        color: #d1d5db !important;
+        background: none !important;
+        -webkit-background-clip: initial !important;
+        -webkit-text-fill-color: #d1d5db !important;
+        text-shadow: none !important;
+        letter-spacing: 0 !important;
+        font-family: -apple-system, system-ui, sans-serif !important;
+      }
+
+      /* ===== ПРОФИЛЬ ===== */
+      .profile-menu {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 10;
+      }
+
+      .profile-button {
+        border: none;
+        background: none;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+      }
+
+      .profile-avatar-small {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .profile-button:hover .profile-avatar-small {
+        transform: scale(1.1);
+      }
+
+      /* Кнопки тем и городов - нижний ряд */
+      .header-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      /* === КНОПКА ТЕМ === */
+      .themes-menu {
+        position: relative;
+        display: inline-block;
+      }
+
+      .themes-button {
+        outline: none !important;
+        border: none !important;
+        padding: 8px 16px;
+        font-size: 15px;
+        min-height: 40px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+      }
+
+      .themes-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgb(255, 255, 255);
+        border-radius: 16px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        min-width: 200px;
+        z-index: 1000;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 12px;
+        max-width: 300px;
+      }
+
+      .themes-dropdown.hidden {
+        display: none;
+      }
+
+      .theme-chip {
+        flex: 1 1 80px;
+        padding: 8px 12px;
+        border: none;
+        background: rgba(255, 255, 255, 0.7);
+        text-align: center;
+        cursor: pointer;
+        border-radius: 12px;
+        color: #333333 !important;
+        font-weight: 500;
+        font-size: 14px;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+      }
+
+      .theme-chip:hover {
+        background: #e3f2fd;
+        color: #1565c0 !important;
+        transform: translateY(-1px);
+      }
+
+      .theme-chip.active {
+        background: var(--primary-gradient);
+        color: #fff !important;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+      }
+
+      /* Выпадающее меню городов */
+      .cities-menu {
+        position: relative;
+        display: inline-block;
+      }
+
+      .cities-button {
+        outline: none !important;
+        border: none !important;
+        width: auto;
+        padding: 8px 16px;
+        font-size: 15px;
+        min-height: 40px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+      }
+
+      .cities-button:focus {
+        outline: none !important;
+        box-shadow: none !important;
+      }
+
+      .cities-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: rgb(255, 255, 255);
+        border-radius: 16px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        min-width: 160px;
+        z-index: 1000;
+      }
+
+      .cities-dropdown.hidden {
+        display: none;
+      }
+
+      .city-chip {
+        display: block;
+        width: 100%;
+        padding: 10px 16px;
+        border: none;
+        background: none;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 12px;
+        color: #888888 !important;
+        font-weight: 500;
+        font-size: 15px;
+      }
+
+      .city-chip:hover {
+        background: #f5f5ff;
+        color: #1a1a1a !important;
+      }
+
+      .city-chip.active {
+        background: #e3f2fd;
+        color: #1565c0 !important;
+      }
+
+      .add-city {
+        background: linear-gradient(135deg, #f093fb, #f5576c) !important;
+        color: #fff !important;
+      }
+
+      /* Карточки */
+      .place-card {
+        background: rgb(35, 35, 36) !important;
+        border-radius: var(--border-radius);
+        padding: 0;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        cursor: pointer !important;
+      }
+
+      .place-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+      }
+
+      .place-card img {
+        width: 100%;
+        height: auto !important;
+        aspect-ratio: 16/10;
+        object-fit: cover;
+        border-radius: 20px 20px 0 0;
+      }
+
+      .place-card-content {
+        padding: 20px;
+      }
+
+      .place-card-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #ebebeb;
+      }
+
+      .place-card-desc {
+        font-size: 16px;
+        color: #585858;
+        line-height: 1.5;
+      }
+
+      .card-theme-list {
+        margin-top: 8px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .card-theme-chip {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        color: #dcdcdc;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+
+      .card-theme-list {
+        margin-top: 8px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .card-theme-chip {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        color: #dcdcdc;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+
+      .places-list {
+        display: flex !important;
+        flex-direction: column;
+        gap: 16px;
+        min-height: 200px;
+      }
+
+      /* Кнопка Suggest */
+      .suggest-button {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 18px 36px;
+        font-size: 17px;
+        font-weight: 700;
+        box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      .suggest-button:hover:active {
+        transform: translateX(-50%) translateY(2px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+      }
+
+      /* Модалки добавления */
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+        z-index: 3000;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal.hidden {
+        display: none;
+      }
+
+      .modal-content {
+        background: rgb(53, 53, 54);
+        padding: 32px;
+        border-radius: 28px;
+        width: 90%;
+        max-width: 440px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.25);
+        animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .modal-content h2 {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 24px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .modal-content label {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .modal-content input,
+      .modal-content textarea,
+      .modal-content select {
+        padding: 16px 20px;
+        border: 2px solid #e8ecf4;
+        border-radius: 16px;
+        font-size: 16px;
+        background: #3b3b3b;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        color: white;
+      }
+
+      .modal-content input:focus,
+      .modal-content textarea:focus,
+      .modal-content select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        background: rgb(44, 44, 45);
+      }
+
+      .modal-content textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .btn {
+        padding: 14px 28px;
+        border-radius: 16px;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn.primary {
+        background: var(--primary-gradient);
+        color: rgb(255, 255, 255);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn.primary:hover:active {
+        transform: translateY(2px);
+      }
+
+      .btn.secondary {
+        background: #2a2a2a;
+        color: #6c757d;
+      }
+
+      /* ===== АВАТАР С ЗАГРУЗКОЙ ===== */
+      .avatar-upload {
+        position: relative;
+        display: block;
+        cursor: pointer;
+      }
+
+      .profile-avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        object-fit: cover;
+        transition: all 0.3s ease;
+      }
+
+      .upload-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .avatar-upload:hover .upload-overlay {
+        opacity: 1;
+      }
+
+      .profile-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 0;
+      }
+
+      .profile-info {
+        text-align: center;
+      }
+
+      .profile-nickname {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 12px;
+      }
+
+      .nickname-edit {
+        background: #3b3b3b;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 8px;
+        transition: all 0.3s ease;
+        width: 200px;
+      }
+
+      .nickname-edit:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+      }
+
+      /* Полноэкранная карточка локации (просмотр) */
+      .place-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2000;
+      }
+      .place-modal.hidden {
+        display: none !important;
+      }
+      .place-modal-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.8);
+        height: 100vh;
+        padding: 20px;
+      }
+      .place-modal-content {
+        width: 90%;
+        max-width: 500px;
+        height: 80vh;
+        background: rgb(50, 50, 50);
+        border-radius: 24px;
+        overflow: hidden;
+      }
+      .place-gallery {
+        position: relative;
+        height: 300px;
+        background: #252525;
+      }
+      #placePhotoMain {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .gallery-prev,
+      .gallery-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: rgb(255, 255, 255);
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      .gallery-prev {
+        left: 12px;
+      }
+      .gallery-next {
+        right: 12px;
+      }
+      .photo-counter {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: rgb(24, 24, 24);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+      }
+      .place-info {
+        padding: 24px;
+        height: calc(80vh - 300px);
+        overflow-y: auto;
+      }
+      .place-info h2 {
+        margin: 0 0 12px;
+        font-size: 24px;
+        font-weight: 700;
+      }
+      .place-info p {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+      .place-map {
+        height: 200px;
+        background: #29292d;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        border: 2px dashed #363636;
+      }
+      .place-close-btn {
+        width: 100%;
+        padding: 16px;
+        background: #515151;
+        border: none;
+        border-radius: 16px;
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      /* Dark mode */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #1a1a1a;
+        }
+        .header,
+        .place-card,
+        .modal-content,
+        .cities-dropdown,
+        .themes-dropdown {
+          background: #2a2a2a;
+        }
+      }
+
+      #placePhotoMain {
+        width: 100%;
+        height: 100%;
+        object-fit: contain !important;
+        background: #212121;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <!-- Заголовок сверху по центру -->
+        <h1>TAG</h1>
+
+        <!-- КНОПКА ПРОФИЛЯ - ПРАВЫЙ ВЕРХНИЙ УГОЛ -->
+        <div class="profile-menu">
+          <button id="profileBtn" class="profile-button">
+            <img
+              id="headerAvatar"
+              src="https://via.placeholder.com/36x36/fff5f5/ffd700?text=🐱"
+              alt="Blondi"
+              class="profile-avatar-small"
+            />
+          </button>
+        </div>
+
+        <!-- Кнопки тем и городов внизу по центру -->
+        <div class="header-buttons">
+          <!-- КНОПКА ТЕМ -->
+          <div class="themes-menu">
+            <button id="themesBtn" class="themes-button">Themes ▼</button>
+            <div id="themesDropdown" class="themes-dropdown hidden">
+              <button class="theme-chip active" data-theme="popular">
+                Popular
+              </button>
+              <button class="theme-chip" data-theme="culture">Culture</button>
+              <button class="theme-chip" data-theme="for-photos">
+                For Photos
+              </button>
+              <button class="theme-chip" data-theme="restaurant">
+                Restaurant
+              </button>
+              <button class="theme-chip" data-theme="yum">Yum</button>
+            </div>
+          </div>
+
+          <!-- КНОПКА ГОРОДОВ -->
+          <div class="cities-menu">
+            <button id="citiesBtn" class="cities-button">Новосибирск ▼</button>
+            <div id="citiesDropdown" class="cities-dropdown hidden">
+              <button class="city-chip active" data-city="novosibirsk">
+                Новосибирск
+              </button>
+              <button class="city-chip" data-city="moscow">Москва</button>
+              <button class="city-chip" data-city="spb">Санкт-Петербург</button>
+              <button class="city-chip add-city" data-city="add">
+                ➕ Добавить город
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+        <div id="placesList" class="places-list">
+          <p>Загрузка локаций...</p>
+        </div>
+      </main>
+
+      <button id="suggestBtn" class="suggest-button">
+        ➕ suggest a location
+      </button>
+
+      <!-- МОДАЛКА ПРОФИЛЯ С ЗАГРУЗКОЙ АВАТАРА -->
+      <div id="profileModal" class="modal hidden">
+        <div class="modal-content">
+          <h2></h2>
+          <div class="profile-card">
+            <label for="avatarInput" class="avatar-upload">
+              <img
+                id="profileAvatar"
+                src="https://via.placeholder.com/120x120/fff5f5/ffd700?text=🐱"
+                alt="Blondi"
+                class="profile-avatar"
+              />
+              <div class="upload-overlay">📸<br />Нажми для смены</div>
+            </label>
+            <input
+              type="file"
+              id="avatarInput"
+              accept="image/*"
+              style="display: none"
+            />
+
+            <div class="profile-info">
+              <div class="profile-nickname" id="profileNickname">Blondi</div>
+              <input
+                type="text"
+                id="nicknameInput"
+                placeholder="Новое имя..."
+                class="nickname-edit"
+              />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="closeProfile" class="btn secondary">Закрыть</button>
+            <button id="saveProfile" class="btn primary">💾 Сохранить</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Модалки добавления -->
+      <div id="suggestModal" class="modal hidden">
+        <div class="modal-content">
+          <h2>➕ Новый город</h2>
+          <label>
+            Название города
+            <input
+              type="text"
+              id="newCityName"
+              placeholder="Казань, Екатеринбург..."
+            />
+          </label>
+          <div class="modal-actions">
+            <button id="cancelBtn" class="btn secondary">❌ Отмена</button>
+            <button id="submitBtn" class="btn primary">
+              ✅ Предложить город
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="locationModal" class="modal hidden">
+        <div class="modal-content">
+          <h2>➕ Новая локация</h2>
+          <label>
+            Город
+            <div class="city-select-container">
+              <select id="locationCity" required>
+                <option value="">Выбери город...</option>
+                <option value="novosibirsk">Новосибирск</option>
+                <option value="moscow">Москва</option>
+                <option value="spb">Санкт-Петербург</option>
+              </select>
+            </div>
+          </label>
+          <label>
+            Название
+            <input
+              type="text"
+              id="locationTitle"
+              placeholder="Красная площадь"
+              required
+            />
+          </label>
+          <label>
+            Описание
+            <textarea
+              id="locationDesc"
+              placeholder="Красивое место..."
+              required
+            ></textarea>
+          </label>
+          <label>
+            Темы (выберите несколько)
+            <div
+              style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px"
+            >
+              <label style="display: flex; align-items: center; gap: 6px">
+                <input type="checkbox" class="theme-select" value="popular" />
+                Popular
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px">
+                <input type="checkbox" class="theme-select" value="culture" />
+                Culture
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px">
+                <input
+                  type="checkbox"
+                  class="theme-select"
+                  value="for-photos"
+                />
+                For Photos
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px">
+                <input
+                  type="checkbox"
+                  class="theme-select"
+                  value="restaurant"
+                />
+                Restaurant
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px">
+                <input type="checkbox" class="theme-select" value="yum" /> Yum
+              </label>
+            </div>
+          </label>
+          <div class="modal-actions">
+            <button id="locationCancel" class="btn secondary">❌ Отмена</button>
+            <button id="locationSubmit" class="btn primary">
+              ✅ Предложить
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="placeModal" class="place-modal hidden">
+        <div class="place-modal-overlay" onclick="closePlaceModal()">
+          <div class="place-modal-content" onclick="event.stopPropagation()">
+            <div class="place-gallery">
+              <button class="gallery-prev" onclick="changePhoto(-1)">❮</button>
+              <img id="placePhotoMain" src="" alt="" />
+              <button class="gallery-next" onclick="changePhoto(1)">❯</button>
+              <div id="photoCounter" class="photo-counter">1/1</div>
+            </div>
+            <div class="place-info">
+              <h2 id="placeTitleModal"></h2>
+              <p id="placeDescModal"></p>
+              <div id="placeMap" class="place-map">🗺️ Карта скоро появится</div>
+              <button onclick="closePlaceModal()" class="place-close-btn">
+                ✕ Закрыть
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+      const tg = window.Telegram.WebApp;
+      if (tg) {
+        tg.ready();
+        const user = tg.initDataUnsafe?.user || { id: "guest" };
+        tg.expand();
+      }
+
+      // ===== ПРОФИЛЬ С АВАТАРОВ И ОБРЕЗКОЙ =====
+      const profileBtn = document.getElementById("profileBtn");
+      const profileModal = document.getElementById("profileModal");
+      const profileAvatar = document.getElementById("profileAvatar");
+      const headerAvatar = document.getElementById("headerAvatar");
+      const profileNickname = document.getElementById("profileNickname");
+      const nicknameInput = document.getElementById("nicknameInput");
+      const avatarInput = document.getElementById("avatarInput");
+      const closeProfile = document.getElementById("closeProfile");
+      const saveProfile = document.getElementById("saveProfile");
+
+      let currentAvatar =
+        localStorage.getItem("avatar") ||
+        "https://via.placeholder.com/120x120/fff5f5/ffd700?text=🐱";
+      let currentNickname = localStorage.getItem("nickname") || "Blondi 🐾";
+
+      // Загрузка сохраненных данных
+      profileAvatar.src = currentAvatar;
+      headerAvatar.src = currentAvatar;
+      profileNickname.textContent = currentNickname;
+      nicknameInput.value = currentNickname;
+
+      // Открытие модалки
+      profileBtn.onclick = () => profileModal.classList.remove("hidden");
+
+      // Закрытие
+      closeProfile.onclick = () => profileModal.classList.add("hidden");
+
+      // Загрузка и обрезка аватара
+      avatarInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              canvas.width = 120;
+              canvas.height = 120;
+              const ctx = canvas.getContext("2d");
+
+              // Создаем круглую маску
+              ctx.clearRect(0, 0, 120, 120);
+              ctx.beginPath();
+              ctx.arc(60, 60, 60, 0, Math.PI * 2);
+              ctx.clip();
+
+              // Рисуем изображение
+              ctx.drawImage(img, 0, 0, 120, 120);
+
+              // Обновляем аватарки
+              const newAvatar = canvas.toDataURL("image/jpeg", 0.9);
+              profileAvatar.src = newAvatar;
+              headerAvatar.src = newAvatar;
+              currentAvatar = newAvatar;
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      // Сохранение профиля
+      saveProfile.onclick = () => {
+        const newNickname = nicknameInput.value.trim() || currentNickname;
+
+        localStorage.setItem("avatar", currentAvatar);
+        localStorage.setItem("nickname", newNickname);
+
+        profileNickname.textContent = newNickname;
+        currentNickname = newNickname;
+
+        alert("✅ Профиль сохранен!");
+        profileModal.classList.add("hidden");
+      };
+
+      const placesData = {
+        moscow: [
+          {
+            title: "Красная площадь",
+            desc: "Сердце России",
+            themes: ["culture"],
+            photos: [
+              "https://via.placeholder.com/400x250/ff6b6b/ffffff?text=Красная+1",
+              "https://via.placeholder.com/400x250/ff4757/ffffff?text=Красная+2",
+              "https://via.placeholder.com/400x250/ff7f50/ffffff?text=Красная+3",
+            ],
+          },
+          {
+            title: "Парк Горького",
+            desc: "Закаты над рекой",
+            themes: ["for-photos", "popular"],
+            photos: [
+              "https://via.placeholder.com/400x250/4ecdc4/000?text=Горького+1",
+              "https://via.placeholder.com/400x250/1abc9c/000?text=Горького+2",
+            ],
+          },
+          {
+            title: "ВДНХ",
+            desc: "Космос и фонтаны",
+            themes: ["popular", "culture"],
+            photos: [
+              "https://via.placeholder.com/400x250/f39c12/fff?text=ВДНХ+1",
+              "https://via.placeholder.com/400x250/f1c40f/000?text=ВДНХ+2",
+            ],
+          },
+          {
+            title: "Арбат",
+            desc: "Уличные музыканты",
+            themes: ["culture"],
+            photos: [
+              "https://via.placeholder.com/400x250/9b59b6/fff?text=Арбат+1",
+              "https://via.placeholder.com/400x250/8e44ad/fff?text=Арбат+2",
+            ],
+          },
+          {
+            title: "Хлебозавод № 9",
+            desc: "Культурный центр",
+            themes: ["culture", "for-photos"],
+            photos: [
+              "/static/photos/moscow/hlebz2.jpg",
+              "/static/photos/moscow/hlebz3.jpg",
+              "/static/photos/moscow/hlebz4.jpg",
+              "/static/photos/moscow/hlebz1.jpg",
+            ],
+          },
+        ],
+        spb: [
+          {
+            title: "Анненкирхе",
+            desc: "Лютеранская церковь",
+            themes: ["culture"],
+            photos: [
+              "/static/photos/spb/annen1.jpg",
+              "/static/photos/spb/annen2.jpg",
+              "/static/photos/spb/annen3.jpeg",
+              "/static/photos/spb/annen4.jpg",
+              "/static/photos/spb/annen5.jpg",
+              "/static/photos/spb/annen6.jpg",
+            ],
+          },
+          {
+            title: "Исаакиевский собор",
+            desc: "Вид с колоннады",
+            themes: ["culture"],
+            photos: [
+              "https://via.placeholder.com/400x250/45b7d1/fff?text=Исаакий+1",
+              "https://via.placeholder.com/400x250/2980b9/fff?text=Исаакий+2",
+            ],
+          },
+          {
+            title: "Эрмитаж",
+            desc: "Зимний дворец",
+            themes: ["culture"],
+            photos: [
+              "https://via.placeholder.com/400x250/f7dc6f/000?text=Эрмитаж+1",
+              "https://via.placeholder.com/400x250/f1c40f/000?text=Эрмитаж+2",
+            ],
+          },
+          {
+            title: "Развод мостов",
+            desc: "Ночью на Неве",
+            themes: ["for-photos"],
+            photos: [
+              "https://via.placeholder.com/400x250/3498db/fff?text=Мосты+1",
+              "https://via.placeholder.com/400x250/2ecc71/fff?text=Мосты+2",
+            ],
+          },
+          {
+            title: "Петропавловка",
+            desc: "Канонный выстрел",
+            themes: ["culture"],
+            photos: [
+              "https://via.placeholder.com/400x250/e67e22/fff?text=Крепость+1",
+              "https://via.placeholder.com/400x250/d35400/fff?text=Крепость+2",
+            ],
+          },
+        ],
+        novosibirsk: [
+          {
+            title: "Shredder Pizza",
+            desc: "Пиццерия",
+            themes: ["yum", "popular"],
+            photos: [
+              "/static/photos/novosibirsk/shpizza1.jpg",
+              "/static/photos/novosibirsk/shpizza2.jpg",
+              "/static/photos/novosibirsk/shpizza3.jpg",
+            ],
+          },
+          {
+            title: "Harucha",
+            desc: "bubble tea bar",
+            themes: ["popular"],
+            photos: [
+              "/static/photos/novosibirsk/haruf.jpg",
+              "/static/photos/novosibirsk/haru2.jpg",
+              "/static/photos/novosibirsk/haru1.png",
+              "/static/photos/novosibirsk/haru4.jpg",
+              "/static/photos/novosibirsk/haru3.jpg",
+              "/static/photos/novosibirsk/haru5.jpg",
+              "/static/photos/novosibirsk/haru.png",
+            ],
+          },
+          {
+            title: "Оперный театр",
+            desc: "Рекорд Гиннесса",
+            themes: ["culture"],
+            photos: [
+              "/static/photos/novosibirsk/н1.jpg",
+              "/static/photos/novosibirsk/н2.jpg",
+              "/static/photos/novosibirsk/н3.jpg",
+            ],
+          },
+        ],
+      };
+
+      let currentPlacePhotos = [];
+      let currentPhotoIndex = 0;
+      let currentCity = "novosibirsk";
+      let currentTheme = "popular";
+
+      function showPlaces(city, theme = null) {
+        const placesList = document.getElementById("placesList");
+        const places = placesData[city] || [];
+        let filteredPlaces = places;
+        if (theme)
+          filteredPlaces = places.filter(
+            (p) =>
+              p.theme === theme ||
+              (Array.isArray(p.themes) && p.themes.includes(theme)),
+          );
+
+        placesList.innerHTML = filteredPlaces.length
+          ? filteredPlaces
+              .map(
+                (p, index) => `
+            <div class="place-card clickable-card" data-index="${index}" data-theme="${p.theme || (p.themes ? p.themes.join(",") : "")}">
+              <img src="${p.photos[0]}" alt="${p.title}" loading="lazy">
+              <div class="place-card-content">
+                <div class="place-card-title">${p.title}</div>
+                <div class="place-card-desc">${p.desc}</div>
+              </div>
+            </div>`,
+              )
+              .join("")
+          : "<p>Локации в теме скоро появятся</p>";
+
+        document.querySelectorAll(".clickable-card").forEach((card, index) => {
+          card.style.cursor = "pointer";
+          card.onclick = (e) => {
+            e.stopPropagation();
+            const place = filteredPlaces[index];
+            openPlaceModal(place);
+          };
+        });
+      }
+
+      function openPlaceModal(place) {
+        document.getElementById("placeTitleModal").textContent = place.title;
+        document.getElementById("placeDescModal").textContent = place.desc;
+        currentPlacePhotos =
+          Array.isArray(place.photos) && place.photos.length
+            ? place.photos
+            : [place.img];
+        currentPhotoIndex = 0;
+        document.getElementById("placePhotoMain").src =
+          currentPlacePhotos[currentPhotoIndex];
+        document.getElementById("photoCounter").textContent =
+          `${currentPhotoIndex + 1}/${currentPlacePhotos.length}`;
+
+        document.getElementById("placeModal").classList.remove("hidden");
+      }
+
+      function closePlaceModal() {
+        document.getElementById("placeModal").classList.add("hidden");
+      }
+
+      function changePhoto(direction) {
+        if (!currentPlacePhotos.length) return;
+        currentPhotoIndex += direction;
+        if (currentPhotoIndex < 0)
+          currentPhotoIndex = currentPlacePhotos.length - 1;
+        if (currentPhotoIndex >= currentPlacePhotos.length)
+          currentPhotoIndex = 0;
+        document.getElementById("placePhotoMain").src =
+          currentPlacePhotos[currentPhotoIndex];
+        document.getElementById("photoCounter").textContent =
+          `${currentPhotoIndex + 1}/${currentPlacePhotos.length}`;
+      }
+
+      // Event listeners для остального функционала
+      const themesBtn = document.getElementById("themesBtn");
+      const themesDropdown = document.getElementById("themesDropdown");
+      const themeChips = document.querySelectorAll(".theme-chip");
+      const citiesBtn = document.getElementById("citiesBtn");
+      const citiesDropdown = document.getElementById("citiesDropdown");
+      const cityChips = document.querySelectorAll(".city-chip");
+      const suggestBtn = document.getElementById("suggestBtn");
+      const modal = document.getElementById("suggestModal");
+      const locationModal = document.getElementById("locationModal");
+      const cancelBtn = document.getElementById("cancelBtn");
+      const locationCancel = document.getElementById("locationCancel");
+      const submitBtn = document.getElementById("submitBtn");
+      const locationSubmit = document.getElementById("locationSubmit");
+      const themesMenu = document.querySelector(".themes-menu");
+      const citiesMenu = document.querySelector(".cities-menu");
+
+      themesBtn.onclick = () => {
+        themesDropdown.classList.toggle("hidden");
+        citiesDropdown.classList.add("hidden");
+      };
+
+      themeChips.forEach((chip) => {
+        chip.onclick = (e) => {
+          e.stopPropagation();
+          themeChips.forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+          currentTheme = chip.dataset.theme;
+          showPlaces(currentCity, currentTheme);
+          themesDropdown.classList.add("hidden");
+        };
+      });
+
+      citiesBtn.onclick = () => {
+        citiesDropdown.classList.toggle("hidden");
+        themesDropdown.classList.add("hidden");
+      };
+
+      cityChips.forEach((chip) => {
+        chip.onclick = (e) => {
+          e.stopPropagation();
+          cityChips.forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+          citiesBtn.textContent = chip.textContent.replace("➕ ", "") + " ▼";
+          if (chip.dataset.city === "add") {
+            modal.classList.remove("hidden");
+          } else {
+            currentCity = chip.dataset.city;
+            showPlaces(currentCity, currentTheme);
+            citiesDropdown.classList.add("hidden");
+          }
+        };
+      });
+
+      document.onclick = (e) => {
+        if (!themesMenu.contains(e.target) && !citiesMenu.contains(e.target)) {
+          themesDropdown.classList.add("hidden");
+          citiesDropdown.classList.add("hidden");
+        }
+      };
+
+      suggestBtn.onclick = (e) => {
+        e.stopPropagation();
+        locationModal.classList.remove("hidden");
+        themesDropdown.classList.add("hidden");
+        citiesDropdown.classList.add("hidden");
+      };
+
+      const user = tg.initDataUnsafe?.user || {
+        id: "guest",
+        username: "guest",
+      };
+
+      cancelBtn.onclick = () => modal.classList.add("hidden");
+      submitBtn.onclick = async () => {
+        const newCity = document.getElementById("newCityName").value.trim();
+        if (newCity) {
+          try {
+            const res = await fetch("/api/suggest", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                type: "city",
+                city: newCity,
+                user_id: user.id || "guest",
+                nickname: currentNickname || "Гость",
+              }),
+            });
+            if (res.ok) {
+              alert("✅ Город отправлен на модерацию!");
+              document.getElementById("newCityName").value = "";
+              modal.classList.add("hidden");
+            }
+          } catch (e) {
+            alert("❌ Проверь интернет");
+          }
+        }
+      };
+
+      locationCancel.onclick = () => locationModal.classList.add("hidden");
+      locationSubmit.onclick = async () => {
+        const citySelect = document.getElementById("locationCity");
+        const title = document.getElementById("locationTitle").value.trim();
+        const desc = document.getElementById("locationDesc").value.trim();
+        if (citySelect.value && title && desc) {
+          // collect selected themes
+          const selected = Array.from(
+            document.querySelectorAll(".theme-select:checked"),
+          ).map((el) => el.value);
+
+          try {
+            const res = await fetch("/api/suggest", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                type: "place",
+                city: citySelect.value,
+                title: title,
+                description: desc,
+                themes: selected,
+                user_id: user.id || "guest",
+                nickname: currentNickname || "Гость",
+              }),
+            });
+            if (res.ok) {
+              alert("✅ Локация отправлена на модерацию!");
+              citySelect.value = "";
+              document.getElementById("locationTitle").value = "";
+              document.getElementById("locationDesc").value = "";
+              // clear theme selection
+              document
+                .querySelectorAll(".theme-select")
+                .forEach((c) => (c.checked = false));
+              locationModal.classList.add("hidden");
+            }
+          } catch (e) {
+            alert("❌ Проверь интернет");
+          }
+        }
+      };
+
+      showPlaces("novosibirsk", "popular");
+    </script>
+  </body>
+</html>
