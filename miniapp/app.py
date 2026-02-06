@@ -12,6 +12,11 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # ===== APP =====
 app = Flask(__name__, template_folder='templates', static_folder='static')
+from flask import send_from_directory
+
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory(app.static_folder, filename)
 app.config['SECRET_KEY'] = 'your-secret-key-change-it'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASE_DIR, 'tag.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -184,3 +189,4 @@ if __name__ == "__main__":
     print("👑 http://localhost:8000/admin/")
 
     app.run(host="0.0.0.0", port=8000, debug=True)
+
