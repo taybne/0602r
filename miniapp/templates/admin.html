@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>THEARCGO Admin</title>
+    <style>body{font-family:system-ui;background:#1a1a1a;color:white;padding:20px;max-width:1200px;margin:0 auto;}
+    .tab{padding:12px 24px;background:#333;border-radius:12px;cursor:pointer;margin:0 5px 20px 0;}.tab.active{background:#667eea;}
+    .suggestions{display:none;background:#2a2a2a;padding:20px;border-radius:16px;margin:10px 0;}.suggestions.active{display:block;}
+    .card{background:#3a3a3a;padding:15px;border-radius:12px;margin:10px 0;}
+    .btn{padding:8px 16px;border:none;border-radius:8px;cursor:pointer;margin:3px;font-weight:600;}
+    .accept{background:#10b981;color:white;}.reject{background:#ef4444;color:white;}</style>
+</head>
+<body>
+    <h1>🛠️ THEARCGO Админка</h1>
+    <div style="margin:20px 0;">
+        <button class="tab active" onclick="showTab('cities')">🏙️ Города</button>
+        <button class="tab" onclick="showTab('places')">📍 Локации</button>
+    </div>
+    <div id="citiesTab" class="suggestions active"><h2>Города на модерации</h2><div id="citiesList">Загрузка...</div></div>
+    <div id="placesTab" class="suggestions"><h2>Локации на модерации</h2><div id="placesList">Загрузка...</div></div>
+
+    <script>
+    async function loadData(){ 
+        const [cities,places]=await Promise.all([fetch('/api/admin/suggested-cities').then(r=>r.json()),fetch('/api/admin/suggested-places').then(r=>r.json())]);
+        document.getElementById('citiesList').innerHTML=cities.length?cities.map(c=>`<div class="card"><h3>${c.name}</h3><p>${c.user_nickname}</p><button class="btn accept" onclick="approve('city',${c.id})">✅</button><button class="btn reject" onclick="reject('city',${c.id})">❌</button></div>`).join(''):'<p>Пусто</p>';
+        document.getElementById('placesList').innerHTML=places.length?places.map(p=>`<div class="card"><h3>${p.title}</h3><p>${p.city} | ${p.user_nickname}</p><button class="btn accept" onclick="approve('place',${p.id})">✅</button><button class="btn reject" onclick="reject('place',${p.id})">❌</button></div>`).join(''):'<p>Пусто</p>';
+    }
+    async function approve(type,id){await fetch(`/api/admin/approve-${type}/${id}`,{method:'POST'});loadData();}
+    async function reject(type,id){await fetch(`/api/admin/reject-${type}/${id}`,{method:'POST'});loadData();}
+    function showTab(tab){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.suggestions').forEach(s=>s.classList.remove('active'));event.target.classList.add('active');document.getElementById(tab+'Tab').classList.add('active');}
+    loadData();setInterval(loadData,5000);
+    </script>
+</body>
+</html>
